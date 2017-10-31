@@ -1,0 +1,154 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>js波浪导航-jq22.com</title>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<style>
+ * {
+	margin:0;
+	padding:0;
+	font-family:"微软雅黑";
+}
+body {
+	width:100vw;
+}
+.wave-ul {
+	list-style:none;
+}
+.wave-a {
+	text-decoration:none;
+	display:block;
+}
+.wave-span {
+	background:#f69;
+	color:#fff;
+	width:20px;
+	display:block;
+}
+.waveli-in-right {
+	float:left;
+}
+.waveli-in-left {
+	float:right;
+}
+.wavenav-right {
+	left:100%;
+	margin-left:-20px;
+}
+.wavenav-left {
+	left:0%;
+	margin-left:-130px;
+}
+.wave-li {
+	margin:1px;
+	display:block;
+	background:#ccc;
+	width:150px;
+	overflow:hidden;
+}
+.wave-nav {
+	position:fixed;
+}
+</style>
+</head>
+<body>
+<div id="test"><div></div></div>
+
+<script>
+var wavenav = function(json, dir, top) {
+    this.json = json;
+    this.dir = dir;
+    this.top = top;
+}
+wavenav.prototype = {
+    constructor: wavenav,
+    createHTML: function() {
+        var json = this.json;
+        var htmlstr = '<nav class="wave-nav"><ul class="wave-ul">';
+        for (var key in json) {
+            htmlstr += '<li class="wave-li"><span class="wave-span">' + key +
+                '</span><a href="' + json[key][1] +
+                '" class="wave-a">' + json[key][0] + '</a></li>';
+        }
+        htmlstr += '</ul></nav>'
+        return htmlstr;
+    },
+    renderCSS: function() {
+        var dir = this.dir;
+        var top = this.top;
+        var oNavLenght = document.getElementsByClassName('wave-nav').length;
+        var oLastNav = document.getElementsByClassName('wave-nav')[oNavLenght - 1];
+        oLastNav.style.top = top;
+        var oLastUl = oLastNav.children[0];
+        var oLi = oLastUl.children;
+        switch (dir) {
+            //case 'RIGHT':addClassName('wavenav-right','waveli-in-right');break;
+            case 'LEFT':
+                addClassName('wavenav-left', 'waveli-in-left');
+                break;
+            default:
+                addClassName('wavenav-right', 'waveli-in-right');
+                break;
+        }
+
+        function addClassName(classname1, classname2) {
+            oLastNav.classList.add(classname1);
+            for (let i = 0; i < oLi.length; i++) {
+                oLi[i].firstChild.classList.add(classname2);
+                oLi[i].lastChild.classList.add(classname2);
+            }
+        }
+    },
+    bindEVENT: function() {
+        var oUl = document.getElementsByClassName('wave-ul');
+        for (let i = 0; i < oUl.length; i++) {
+            oUl[i].onmouseover = function() {
+                var oLi = oUl[i].children;
+                for (let i = 0; i < oLi.length; i++) {
+                    oLi[i].style.transition = '1s ' + 0.1 * i + 's';
+                    if (oLi[i].firstChild.className == 'wave-span waveli-in-left') {
+                        oLi[i].style.marginLeft = '130px';
+                    } else {
+                        oLi[i].style.marginLeft = '-130px';
+                    }
+                }
+            }
+            oUl[i].onmouseleave = function() {
+                var oLi = oUl[i].children;
+                for (let i = 0; i < oLi.length; i++) {
+                    oLi[i].style.marginLeft = '0px';
+                }
+            }
+        }
+    }
+}
+
+function createWaveNav(dom, json, direction = 'RIGHT', top = '0px') {
+    var n = new wavenav(json, direction, top);
+    dom.innerHTML += n.createHTML();
+    n.renderCSS();
+    wavenav.prototype.bindEVENT();
+}
+
+
+var json = {
+    '1': ['HTML', 'javascript:void(0)'],
+    '2': ['CSS', 'javascript:void(0)'],
+    '3': ['JAVASCRIPT', 'javascript:void(0)'],
+}
+var json1 = {
+    '1': ['HTML', 'javascript:void(0)'],
+    '2': ['CSS', 'javascript:void(0)'],
+    '3': ['JAVASCRIPT', 'javascript:void(0)'],
+    '4': ['java', 'javascript:void(0)']
+}
+//调用方法
+createWaveNav(document.getElementById('test'), json);
+createWaveNav(document.getElementById('test'), json1, 'RIGHT', '200px');
+createWaveNav(document.getElementById('test'), json1, 'LEFT');
+createWaveNav(document.getElementById('test'), json, 'LEFT', '200px');
+</script>
+
+</body>
+</html>
